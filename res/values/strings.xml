@@ -1,12 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="red">Red</string>
-    <string name="orange">Orange</string>
-    <string name="yellow">Yellow</string>
-    <string name="green">Green</string>
-    <string name="blue">Blue</string>
-    <string name="indigo">Indigo</string>
-    <string name="violet">Violet</string>
-    <string name="hello">Hello World, JavaSandboxActivity!</string>
-    <string name="app_name">JavaSandbox</string>
+
+    <string name="app_name">DataAccessDemo</string>
+    
 </resources>
