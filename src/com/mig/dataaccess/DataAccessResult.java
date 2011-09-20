@@ -3,13 +3,13 @@ package com.mig.dataaccess;
 
 
 /**
- * @author rob
- * 
  * This is a simple class to store the result of a 
  * http request + parse operation.
  * 
  *   This class is package private, 
  *   is is only used by DataAccess to pass the result of the AsyncTask to the main thread
+ *   
+ * @author rob
  *
  * @param <T> 
  * 			The data object class that should be returned by the data access operation

@@ -1,12 +1,12 @@
 package com.mig.dataaccess.example;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.mig.dataaccess.DataAccess;
 import com.mig.dataaccess.DataAccessErrorType;
@@ -17,8 +17,9 @@ import com.mig.dataaccess.R;
 
 
 /**
- * @author rob
+ * Example code to demonstrate the DataAccess Class
  * 
+ * @author rob
  */
 public class MainActivity extends Activity  {
     
@@ -32,68 +33,61 @@ public class MainActivity extends Activity  {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 		
-		Button next = (Button) findViewById(R.id.Button01);
-		next.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				
-				Intent intent = new Intent(MainActivity.this, SecondaryActivity.class);
-				startActivity(intent);
-				
-			}
-		});
+		//
+		// Initilise the Data acess object with a parser
+		//
 		
 		_dataAccess = new DataAccess<GeoLocationResult>(new GeoLocationJSONParser());
-//		_dataAccess.setCacheLength(this, 45);
-		_dataAccess.setConnectionTimeOut(6);
+		
+		
+		//
+		// Set some paramters
+		//
+		
+		_dataAccess.setCacheLength(this, 10);
+		_dataAccess.setConnectionTimeOut(20);
+		
+		
+		//
+		// Set the code to be run when the request is sucessful or fails.
+		//
+		
         _dataAccess.setSucessDelegate(new IDataAccessSucessDelegate<GeoLocationResult>() {
 
 			@Override
-			public void onDataAccessSucess(GeoLocationResult result) {
+			public void onDataAccessSucess(GeoLocationResult result) 
+			{
+				double lat = result.getResults().get(0).getGeometry().getLocation().getLat();
 				
-    			Log.i(TAG, "Sucess, Latitude: " + result.getResults().get(0).getGeometry().getLocation().getLat());
+    			Log.i(TAG, "Sucess, Latitude: " + lat);
+    			Toast toast = Toast.makeText(MainActivity.this, "Lat:" + lat, 1000);
+    			toast.show();
 			}
 		});
-        
         _dataAccess.setFailureDelegate(new IDataAccessFailureDelegate() {
 
         	@Override
-			public void onDataAccessFailed(DataAccessErrorType failReason, Exception exception) {
-				
+			public void onDataAccessFailed(DataAccessErrorType failReason, Exception exception) 
+        	{
 				Log.i(TAG, "Failed, reason: " + failReason.toString());
 			}
 		});
         
         
-		
-		
+        //
+        // When the user taps the button make the request to an example url (google's geo coder)
+        //
+        
 		((Button)findViewById(R.id.button1)).setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View v) 
 			{
-				GeoLocationResult existingResult = _dataAccess.getDataAccessResult(); 
-				
-				if (existingResult == null) 
-				{
-					Log.i(TAG, "Result not cahced, requesting new");
-					
-					_dataAccess.startDataAccess(getApplication(),
-							"http://maps.googleapis7.com/maps/api/geocode/json?address=11yorkRoad,Waterloo,London&sensor=false",true);
-					
-				} else {
-					
-					Log.i(TAG, "Result already cahced, Latitude: " + existingResult.getResults().get(0).getGeometry().getLocation().getLat());
-				}
+				_dataAccess.startDataAccess(MainActivity.this,
+							"http://maps.googleapis.com/maps/api/geocode/json?address=11yorkRoad,Waterloo,London&sensor=false",true);		
 			}
 		});
-
 	}
-	
-
-
-    
 }
 
 

@@ -1,4 +1,4 @@
-package com.mig.dataaccess;
+package com.mig.dataaccess.example;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -6,9 +6,10 @@ import java.util.Date;
 
 
 /**
- * 
  * Use to check check if a threshold has expired since a last event.
- *  e.g. 5 mins has expired since the last time some data has been downloaded.  
+ *  e.g. 5 mins has expired since the last time some data has been downloaded.
+ *  
+ *  This isnt actually used any more, but i left this in because its usefull.
  * 
  * @author rob
  *
@@ -74,6 +75,5 @@ public class SimpleTimerThreshold {
 		// Compare it to the timeout date
 		return (now.after(_timeoutDate));
 	}
-	
 }
 
