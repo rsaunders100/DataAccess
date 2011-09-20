@@ -21,30 +21,29 @@ import com.github.ignition.support.http.cache.HttpResponseCache;
 
 
 /**
- * @author rob
+ *    Yet anouther HTTP wrapper in the name of reducing boilier plate code.
+ *    This acutally wraps Ignition (formally DriudFu) which in turn wrapps apache.
  * 
- *         The data access class performs a HTTP request and parses the result
- *         on a background thread. It then posts the result back on the main
- *         thread.
+ *    The data access class performs a HTTP request and parses the result
+ *    on a background thread. It then posts the result back on the main
+ *    thread.
+ * 		
+ *    You must specifiy a parser and a sucess handler, 
+ *    optionaly you may specify a fail handeler.
+ *    
+ *    The parser must turn an imput stream into a typed data object of type T (you specify T) 
+ *             
+ *    The class takes a single URL and a delegate class to parse the result
+ *    of the GET.
  * 
- *         The class takes a single URL and a delegate class to parse the result
- *         of the GET.
- * 
- *         The class can cahce persistenty to disk.
- * 
- * 		   The class stores the result of the GET.
- *         Check that the object dosn't exist first before requesting it.
- *            use: getDataAccessResult() and check for null.  
- *          
- *         If you have set up a cache time, getDataAccessResult() will return null 
- *         after the cache lenght has expired.
+ *    The class can cahce persistenty to disk - set up with "setCacheLength"          
  *         		   
- *         You may wish to enclose this class in the activity singleton so that
- *         is persists across activities.
+ *    You may wish to enclose this class in the activity singleton so that
+ *    is persists across activities.
  * 
+ * @author rob
  * @param <T>
- *            The data object that should be returned by the data access
- *            operation.
+ *            The data object that should be returned by the data access operation.
  *            This is the same object type that the given parser should retun
  */
 public class DataAccess<T> {
@@ -60,8 +59,6 @@ public class DataAccess<T> {
 	private IDataAccessSucessDelegate<T> _sucessDelegate;
 	private IDataAccessFailureDelegate 	_failDelegate;
 	private boolean 					_isInProgress = false;
-	private T 							_dataAccessResult;
-	private SimpleTimerThreshold 		_cachedDataTimer;
 	private int 						_connectionTimeOutSeconds;
 	private IgnitedHttp 				_ignitedHttp;
 	
@@ -121,26 +118,6 @@ public class DataAccess<T> {
 	
 
 	/**
-	 * Reutrns the result of the latest sucessfull data access operation.
-	 * 
-	 *  If a chack length has been set up and the cache has expired
-	 *    then this will return null
-	 * 
-	 */
-	public T getDataAccessResult() {
-
-		// If the cahce time has expired clear the cahced data object
-		if (_cachedDataTimer != null
-				&& _cachedDataTimer.hasTimerPassedThreshold()) 
-		{
-			_dataAccessResult = null;
-		}
-
-		return _dataAccessResult;
-	}
-	
-
-	/**
 	 * Set up the cache for the request
 	 * 
 	 *   If a reuqest is made with the cache length of the previous request,
@@ -149,12 +126,8 @@ public class DataAccess<T> {
 	 *   Will also save the results presistantly to the device
 	 *       
 	 */
-	public void setCacheLength(Context context, int cacheLengthSeonds) 
-	{
-		_cachedDataTimer = new SimpleTimerThreshold(cacheLengthSeonds);
-		
-		long cacheLengthMins = Math.round( ((double)cacheLengthSeonds) / 60.0);
-		
+	public void setCacheLength(Context context, int cacheLengthMins) 
+	{	
 		if (cacheLengthMins > 0) 
 		{
 			if (_ignitedHttp == null) {
@@ -574,30 +547,28 @@ public class DataAccess<T> {
 		}
 
 		@Override
-		protected void onPostExecute(DataAccessResult<T> dataAccessResult) {
+		protected void onPostExecute(DataAccessResult<T> dataAccessResult) 
+		{
 
 			// Don't need to do anything special here, just give the result to the delegate
 			// We should check if we have a delegate first.
 
 			_isInProgress = false;
 
-			if (dataAccessResult.isSucess()) {
-
-				// Restart the cahce timer.
-				_cachedDataTimer.restartTimer();
-
-				// Store the data in an internal feed.
-				_dataAccessResult = dataAccessResult.getDataObject();
+			if (dataAccessResult.isSucess()) 
+			{
 
 				// Notify the delegate
-				if (_sucessDelegate != null)  {
-					_sucessDelegate.onDataAccessSucess(_dataAccessResult);
+				if (_sucessDelegate != null)  
+				{
+					_sucessDelegate.onDataAccessSucess(dataAccessResult.getDataObject());
 				}
 
 			} else {
 
 				// Notify the delegate
-				if (_failDelegate != null) {
+				if (_failDelegate != null) 
+				{
 					_failDelegate.onDataAccessFailed(dataAccessResult.getErrorType(),
 													 dataAccessResult.getException());
 				}
