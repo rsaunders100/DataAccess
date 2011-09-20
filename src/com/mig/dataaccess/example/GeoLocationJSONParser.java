@@ -7,6 +7,14 @@ import org.apache.commons.io.IOUtils;
 import com.google.gson.Gson;
 import com.mig.dataaccess.IDataAccessObjectParser;
 
+
+
+/**
+ *  Parses the response from google geo coder into a typed data object.
+ * 
+ * @author rob
+ *
+ */
 public class GeoLocationJSONParser implements IDataAccessObjectParser<GeoLocationResult> {
 
 	@Override

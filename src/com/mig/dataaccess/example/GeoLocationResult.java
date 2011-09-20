@@ -2,7 +2,17 @@ package com.mig.dataaccess.example;
 
 import java.util.List;
 
+
+
+/**
+ *  Type data object for the response from google's geocoding service. 
+ * 
+ * @author rob
+ *
+ */
 public class GeoLocationResult {
+	
+	// See example feed below
 	
 	private String status;
 	private List<GeoLocationResultEntry> results;
@@ -87,3 +97,76 @@ public class GeoLocationResult {
 	}
 	
 }
+
+
+/* 
+ * Example response from URL:
+ *   http://maps.googleapis.com/maps/api/geocode/json?address=11yorkRoad,Waterloo,London&sensor=false
+  
+
+{
+	   "results" : [
+	      {
+	         "address_components" : [
+	            {
+	               "long_name" : "Waterloo",
+	               "short_name" : "Waterloo",
+	               "types" : [ "sublocality", "political" ]
+	            },
+	            {
+	               "long_name" : "Lambeth",
+	               "short_name" : "Lambeth",
+	               "types" : [ "locality", "political" ]
+	            },
+	            {
+	               "long_name" : "Lambeth",
+	               "short_name" : "Lambeth",
+	               "types" : [ "administrative_area_level_3", "political" ]
+	            },
+	            {
+	               "long_name" : "Greater London",
+	               "short_name" : "Greater London",
+	               "types" : [ "administrative_area_level_2", "political" ]
+	            },
+	            {
+	               "long_name" : "England",
+	               "short_name" : "England",
+	               "types" : [ "administrative_area_level_1", "political" ]
+	            },
+	            {
+	               "long_name" : "United Kingdom",
+	               "short_name" : "GB",
+	               "types" : [ "country", "political" ]
+	            },
+	            {
+	               "long_name" : "SE1 7",
+	               "short_name" : "SE1 7",
+	               "types" : [ "postal_code_prefix", "postal_code" ]
+	            }
+	         ],
+	         "formatted_address" : "Waterloo, Lambeth, Greater London SE1, UK",
+	         "geometry" : {
+	            "location" : {
+	               "lat" : 51.5026540,
+	               "lng" : -0.11452290
+	            },
+	            "location_type" : "APPROXIMATE",
+	            "viewport" : {
+	               "northeast" : {
+	                  "lat" : 51.50400298029150,
+	                  "lng" : -0.1131739197084980
+	               },
+	               "southwest" : {
+	                  "lat" : 51.50130501970850,
+	                  "lng" : -0.1158718802915020
+	               }
+	            }
+	         },
+	         "types" : [ "sublocality", "political" ]
+	      }
+	   ],
+	   "status" : "OK"
+	}
+
+
+*/

@@ -22,28 +22,28 @@ import com.github.ignition.support.http.cache.HttpResponseCache;
 
 /**
  *    Yet anouther HTTP wrapper in the name of reducing boilier plate code.
- *    This acutally wraps Ignition (formally DriudFu) which in turn wrapps apache.
+ *    This acutally wraps Ignition (formally DriudFu) which in turn wrapps apache.<p>
  * 
  *    The data access class performs a HTTP request and parses the result
  *    on a background thread. It then posts the result back on the main
- *    thread.
+ *    thread.<p>
  * 		
  *    You must specifiy a parser and a sucess handler, 
- *    optionaly you may specify a fail handeler.
+ *    optionaly you may specify a fail handeler.<p>
  *    
- *    The parser must turn an imput stream into a typed data object of type T (you specify T) 
+ *    The parser must turn an imput stream into a typed data object of type T (you specify T) <p>
  *             
  *    The class takes a single URL and a delegate class to parse the result
- *    of the GET.
+ *    of the GET.<p>
  * 
- *    The class can cahce persistenty to disk - set up with "setCacheLength"          
+ *    The class can cahce persistenty to disk - set up with "setCacheLength"<p>          
  *         		   
  *    You may wish to enclose this class in the activity singleton so that
- *    is persists across activities.
+ *    is persists across activities.<p>
  * 
  * @author rob
  * @param <T>
- *            The data object that should be returned by the data access operation.
+ *            The data object that should be returned by the data access operation.<br>
  *            This is the same object type that the given parser should retun
  */
 public class DataAccess<T> {
@@ -201,27 +201,28 @@ public class DataAccess<T> {
 	}
 
 	/**
-	 * Starts a request using the given URL.
+	 * Starts a request using the given URL.<p>
 	 * 
-	 * You must first set an object parser and a delegate
+	 * You must first set an object parser and a delegate.<p>
 	 * 
 	 * The object parser takes response of the http request and parses it into a
-	 * typed data object.
+	 * typed data object.<p>
 	 * 
-	 * The delegate takes a response object and deals with it.
+	 * The delegate takes a response object and deals with it.<p>
 	 * 
 	 * If usesCache = true it will try to fetch the from the cache first. if
-	 * that fails it will perform the request
+	 * that fails it will perform the request<p>
 	 * 
 	 * NOTE: to use the cache you need to have set up the cache first with the
-	 * "enableCacheWithCacheLenght" method.
+	 * "enableCacheWithCacheLenght" method.<p>
 	 * 
 	 * This will log the request url, the request response, and the parsed
 	 * object using log.i This will log any errors in log.e the errors are then
-	 * packed up in the response object and parsed to the delegate
+	 * packed up in the response object and parsed to the delegate<p>
 	 * 
-	 * NEEDS PERMISSIONS : android.permission.ACCESS_NETWORK_STATE
-	 * android.permission.INTERNET
+	 * NEEDS PERMISSIONS :<br> 
+	 * android.permission.ACCESS_NETWORK_STATE<br>
+	 * android.permission.INTERNET<p>
 	 * 
 	 * @param context
 	 *            Any context
@@ -237,33 +238,34 @@ public class DataAccess<T> {
 
 	
 	/**
-	 * Starts a request using the given URL.
+	 * Starts a request using the given URL.<p>
 	 * 
-	 * You must first set an object parser and a delegate
+	 * You must first set an object parser and a delegate<p>
 	 * 
 	 * The object parser takes response of the http request and parses it into a
-	 * typed data object.
+	 * typed data object.<p>
 	 * 
-	 * The delegate takes a response object and deals with it.
+	 * The delegate takes a response object and deals with it.<p>
 	 * 
 	 * If usesCache = true it will try to fetch the from the cache first. if
-	 * that fails it will perform the request
+	 * that fails it will perform the request<p>
 	 * 
 	 * NOTE: to use the cache you need to have set up the cache first with the
-	 * "enableCacheWithCacheLenght" method.
+	 * "enableCacheWithCacheLenght" method.<p>
 	 * 
 	 * This will log the request url, the request response, and the parsed
 	 * object using log.i This will log any errors in log.e the errors are then
-	 * packed up in the response object and parsed to the delegate
+	 * packed up in the response object and parsed to the delegate<p>
 	 * 
-	 * NEEDS PERMISSIONS : android.permission.ACCESS_NETWORK_STATE
-	 * android.permission.INTERNET
+	 * NEEDS PERMISSIONS :<br> 
+	 * android.permission.ACCESS_NETWORK_STATE<br>
+	 * android.permission.INTERNET<p>
 	 * 
 	 * @param context
 	 *            Any context
 	 * @param url
 	 * @param useCache
-	 *            If true will attempt to pull the result from the cache first.
+	 *            If true will attempt to pull the result from the cache first.<br>
 	 *            If that fails it will perform the request (providing there is a connection)
 	 * @param httpBody
 	 * 			  If not null, the httpBody string will be posted with the request.

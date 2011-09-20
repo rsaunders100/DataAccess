@@ -8,10 +8,15 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
 
+
+
+/**
+ * @author rob
+ *
+ */
 public class DataAccessHelpers {
 
-	
-	
+
 	/**
 	 * Util method for prining a stack trace with a tag It means that we can
 	 * still see the exceptions if we have a filter set on logcat.
@@ -26,7 +31,10 @@ public class DataAccessHelpers {
 	
 	/**
 	 * A nice helper function to check if the intent connection is
-	 * available NEEDS PERMISSION : android.permission.ACCESS_NETWORK_STATE
+	 * available <p>
+	 * 
+	 * NEEDS PERMISSION :<br>
+	 * android.permission.ACCESS_NETWORK_STATE
 	 */
 	static boolean isOnline(Context context) {
 

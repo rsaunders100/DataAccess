@@ -12,15 +12,15 @@ public interface IDataAccessObjectParser<T> {
 	
 	
 	/**
-	 *  * This interface is for parsing an input stream from a HTTP GET request into a typed data object
+	 * This interface is for parsing an input stream from a HTTP GET request into a typed data object.<p>
 	 * 
 	 * NOTE: this method is expected to throw exceptions if it can't parse the result.
-	 * all exceptions will be caught by the calling method and re-labeled as parsing errors
+	 * all exceptions will be caught by the calling method and re-labeled as parsing errors.<p>
 	 * 
-	 * NOTE: if the parser returns null it is assumed to be an error.
+	 * NOTE: if the parser returns null it is assumed to be an error.<p>
 	 * 
 	 * NOTE: this method is called on a background thread, so avoid accessing any shared
-	 * mutable data.
+	 * mutable data.<p>
 	 * 
 	 * @param inputStream
 	 * 				The stream from the HTTP request 
