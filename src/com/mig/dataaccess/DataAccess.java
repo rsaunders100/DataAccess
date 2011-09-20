@@ -1,11 +1,13 @@
 package com.mig.dataaccess;
 
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.ConnectException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.http.entity.StringEntity;
 
 import android.content.Context;
 import android.os.AsyncTask;
@@ -17,8 +19,8 @@ import com.github.ignition.support.http.IgnitedHttpRequest;
 import com.github.ignition.support.http.IgnitedHttpResponse;
 import com.github.ignition.support.http.cache.HttpResponseCache;
 
+
 /**
- * 
  * @author rob
  * 
  *         The data access class performs a HTTP request and parses the result
@@ -40,23 +42,19 @@ import com.github.ignition.support.http.cache.HttpResponseCache;
  *         You may wish to enclose this class in the activity singleton so that
  *         is persists across activities.
  * 
- *         TODO: Add support for posting a payload.
- * 
  * @param <T>
  *            The data object that should be returned by the data access
  *            operation.
  *            This is the same object type that the given parser should retun
  */
 public class DataAccess<T> {
-
 	
-	private static boolean cacheSetUp = false;
-
 	private static final String TAG = "DataAccess";
 
 	// A flag to enable / disable all logging in this class
-	private static final boolean LOG = true;
-
+	private static boolean LOG = true;
+	public static void setLogingEnabled(boolean isLoggingEnabled) { LOG = isLoggingEnabled; }
+	
 	private IDataAccessObjectParser<T> 	_objectParser;
 	private DataAccessTask 				_dataAccessTask;
 	private IDataAccessSucessDelegate<T> _sucessDelegate;
@@ -66,7 +64,6 @@ public class DataAccess<T> {
 	private SimpleTimerThreshold 		_cachedDataTimer;
 	private int 						_connectionTimeOutSeconds;
 	private IgnitedHttp 				_ignitedHttp;
-	
 	
 	// Hides the no-parameter consturctor
 	@SuppressWarnings("unused")
@@ -166,6 +163,16 @@ public class DataAccess<T> {
 			_ignitedHttp.enableResponseCache(context, 10, cacheLengthMins, 3, AbstractCache.DISK_CACHE_INTERNAL);
 		}
 	}
+	
+	
+	public void setHTTPParameter(Context context, String name, Object value) 
+	{
+		if (_ignitedHttp == null) {
+			_ignitedHttp = new IgnitedHttp(context);
+		}
+		
+		_ignitedHttp.getHttpClient().getParams().setParameter(name, value);
+	}
 
 
 	/**
@@ -248,38 +255,77 @@ public class DataAccess<T> {
 	 * @param url
 	 * @param useCache
 	 *            If true will attempt to pull the result from the cache first.
-	 *            If that fails it will perform the request.
+	 *            If that fails it will perform the request (providing there is a connection)
 	 */
-	public void startDataAccess(Context context, String url, boolean useCache) {
+	public void startDataAccess(Context context, String url, boolean useCache) 
+	{
+		startDataAccess(context, url, useCache, null);
+	}
+
+	
+	/**
+	 * Starts a request using the given URL.
+	 * 
+	 * You must first set an object parser and a delegate
+	 * 
+	 * The object parser takes response of the http request and parses it into a
+	 * typed data object.
+	 * 
+	 * The delegate takes a response object and deals with it.
+	 * 
+	 * If usesCache = true it will try to fetch the from the cache first. if
+	 * that fails it will perform the request
+	 * 
+	 * NOTE: to use the cache you need to have set up the cache first with the
+	 * "enableCacheWithCacheLenght" method.
+	 * 
+	 * This will log the request url, the request response, and the parsed
+	 * object using log.i This will log any errors in log.e the errors are then
+	 * packed up in the response object and parsed to the delegate
+	 * 
+	 * NEEDS PERMISSIONS : android.permission.ACCESS_NETWORK_STATE
+	 * android.permission.INTERNET
+	 * 
+	 * @param context
+	 *            Any context
+	 * @param url
+	 * @param useCache
+	 *            If true will attempt to pull the result from the cache first.
+	 *            If that fails it will perform the request (providing there is a connection)
+	 * @param httpBody
+	 * 			  If not null, the httpBody string will be posted with the request.
+	 */
+	public void startDataAccess(Context context, String url, boolean useCache, String httpBody) {
 
 		// Info log is given to give the message some contrast in Logcat
 		if (LOG)
 			Log.i(TAG, "Started data access with UTL: " + url);
 
 		// We only allow one request to be running at once.
-		if (_isInProgress) {
-			Log.w(TAG,
-					"started DataAccess but an opperation was already in progress, so ignored request. Use cancel() or create new data access object.");
+		if (_isInProgress) 
+		{
+			Log.w(TAG, "started DataAccess but an opperation was already in progress, so ignored request. Use cancel() or create new data access object.");
 			return;
 		}
 		_isInProgress = true;
-
-
-		// We first do a quick check if the Internet connection is available
-		// this means that we do not incur an overhead of creating the thread
-		// and
-		// waiting for the connection to timeout if there is no connection
-
-		// If there is no connection hope is not lost yet...
-		// we might be OK with cached data.
-		// If so, check if there anything in the cache first
-		// otherwise the DataAccessTask will waste time again waiting for a
-		// timeout
-
+		
+		
+		// Ensure the http object is initilised with a context
+		// it is neeeded to check th cache
+		
 		if (_ignitedHttp == null) 
 		{
 			_ignitedHttp = new IgnitedHttp(context);
 		}
+		
+		// We first do a quick check if the Internet connection is available
+		// this means that we do not incur an overhead of creating the thread and
+		// waiting for the connection to timeout if there is no connection.
+
+		// If there is no connection hope is not lost yet...
+		// we might be OK with cached data.
+		// If so, check if there anything in the cache first
+		// otherwise the DataAccessTask will waste time again waiting for a timeout
 		
 		boolean isOnline = DataAccessHelpers.isOnline(context);
 		boolean isCached = isCached(url);
@@ -289,60 +335,71 @@ public class DataAccess<T> {
 			if (!isOnline) {
 
 				if (LOG)
-					Log.d(TAG,
-							"No internet connection, but data is cached so continuing with request");
+					Log.d(TAG, "No internet connection, but data is cached so continuing with request");
 			} else if (useCache && isCached) {
 
 				if (LOG)
-					Log.d(TAG,
-							"We have a internet connection, but we have a cached version so we will use that");
+					Log.d(TAG, "We have a internet connection, but we have a cached version so we will use that");
 			} else if (useCache && !isCached) {
 
 				// Save checking the cache again in the DataAccessTask
 				useCache = false;
 				if (LOG)
-					Log.d(TAG,
-							"Connection is live and we have no cached version");
+					Log.d(TAG, "Connection is live and we have no cached version");
 			} else {
 
 				if (LOG)
 					Log.d(TAG, "Connection is live and caching not requested");
 			}
 
-			
-			
 			_ignitedHttp.setConnectionTimeout(_connectionTimeOutSeconds * 1000);
+			
+			IgnitedHttpRequest ignitedHttpRequest = null;
+			if (httpBody != null) 
+			{
+				try 
+				{
+					ignitedHttpRequest = _ignitedHttp.post(url, new StringEntity(httpBody));
+				}
+				catch (UnsupportedEncodingException exception) 
+				{
+					DataAccessHelpers.printStackTraceWithTag(exception, TAG);
+					
+					if (_failDelegate != null) {
+						_failDelegate.onDataAccessFailed(DataAccessErrorType.UNKNOWN_ERROR, exception);
+					}
+				}
+			}
+			else 
+			{
+				_ignitedHttp.setConnectionTimeout(_connectionTimeOutSeconds * 1000);
+				ignitedHttpRequest = _ignitedHttp.get(url, useCache);
+			}
 
-			IgnitedHttpRequest ignitedHttpRequest = _ignitedHttp.get(url,useCache);
-			// _ignitedHttp.enableResponseCache(context, 10,
-			// expirationInMinutes, 2, AbstractCache.DISK_CACHE_INTERNAL);
-
-			// We state that we are only expecting 200 error codes
-			// this way it will throw an exception when other codes are returned
-			// rather than caching the response.
-			// if other error codes are expected you need to add them here
-			ignitedHttpRequest.expecting(200);
-
-			_dataAccessTask = new DataAccessTask();
-
-			_dataAccessTask.setIgnitedHttp(ignitedHttpRequest);
-
-			// _dataAccessTask.setUrl(url);
-			// _dataAccessTask.setUseseCache(useCache);
-			// _dataAccessTask.setContext(context);
-
-			_dataAccessTask.execute();
+		
+			if (ignitedHttpRequest != null) 
+			{
+				// We state that we are only expecting 200 error codes
+				// this way it will throw an exception when other codes are returned
+				// rather than caching the response.
+				// if other error codes are expected you need to add them here
+				ignitedHttpRequest.expecting(200);
+	
+				_dataAccessTask = new DataAccessTask();
+				_dataAccessTask.setIgnitedHttp(ignitedHttpRequest);
+				_dataAccessTask.execute();
+			}
+			
 		} else {
 
 			// Provide some nice feedback to the developer
-			if (useCache) {
-				if (LOG)
-					Log.e(TAG,
-							"No internet connection detected. Cache was requested, but url was not cached.");
-			} else {
-				if (LOG)
-					Log.e(TAG,
-							"No internet connection detected and cache not requested.");
+			if (useCache) 
+			{
+				if (LOG) Log.e(TAG, "No internet connection detected. Cache was requested, but url was not cached.");
+			} 
+			else 
+			{
+				if (LOG) Log.e(TAG, "No internet connection detected and cache not requested.");
 			}
 
 			_isInProgress = false;
@@ -367,6 +424,12 @@ public class DataAccess<T> {
 	}
 	
 	
+	
+	
+	/**
+	 *  Preforms the heavy lifting (request + parse + catch errors) 
+	 *
+	 */
 	private class DataAccessTask extends AsyncTask<Void, Void, DataAccessResult<T>> {
 
 		private static final String TAG = "DataAccess";
@@ -393,20 +456,35 @@ public class DataAccess<T> {
 
 				// Send the request
 				IgnitedHttpResponse ignitedHttpResponse = _ignitedHttpRequest.send();
-
+				
+				
+				
 				// Check if we are canceled now that we have the response
 				// if we are it will save us having to parse the response
 				if (isCancelled())
 					return null;
 				
-				
 				// Get the input stream of the response
-				InputStream responseStream = ignitedHttpResponse.getResponseBody();
+				InputStream responseStream;
+				try {
+					
+					responseStream = ignitedHttpResponse.getResponseBody();
+				} catch (NullPointerException exception) {
+					
+					Log.w(TAG, "Caught null pointer exception, trying again with no cache");
+					
+					// On rare instances the cache might have been removed before we access it.
+					// If this happens we should re-request once with no cache.					
+					IgnitedHttpRequest newRequest = _ignitedHttp.get(_ignitedHttpRequest.getRequestUrl(), false);
+					IgnitedHttpResponse newResponse = newRequest.send();
+					responseStream = newResponse.getResponseBody();
+				}
 
 				// Convert the steam to a string so that we can log it.
 				// This is slightly inefficient since object parser might well do the same.
-				// Ensure loggins is disabled for the final build
+				// Ensure logging is disabled for the final build
 				if (LOG) {
+					
 					String responseString = IOUtils.toString(responseStream,"UTF-8");
 					Log.d(TAG, "Did recieve response: " + responseString);
 					

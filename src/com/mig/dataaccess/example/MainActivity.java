@@ -45,7 +45,8 @@ public class MainActivity extends Activity  {
 		});
 		
 		_dataAccess = new DataAccess<GeoLocationResult>(new GeoLocationJSONParser());
-		
+//		_dataAccess.setCacheLength(this, 45);
+		_dataAccess.setConnectionTimeOut(6);
         _dataAccess.setSucessDelegate(new IDataAccessSucessDelegate<GeoLocationResult>() {
 
 			@Override
@@ -64,7 +65,7 @@ public class MainActivity extends Activity  {
 			}
 		});
         
-        _dataAccess.setCacheLength(this, 15);
+        
 		
 		
 		((Button)findViewById(R.id.button1)).setOnClickListener(new OnClickListener() {
@@ -79,7 +80,7 @@ public class MainActivity extends Activity  {
 					Log.i(TAG, "Result not cahced, requesting new");
 					
 					_dataAccess.startDataAccess(getApplication(),
-							"http://maps.googleapis.com/maps/api/geocode/json?address=11yorkRoad,Waterloo,London&sensor=false",false);
+							"http://maps.googleapis7.com/maps/api/geocode/json?address=11yorkRoad,Waterloo,London&sensor=false",true);
 					
 				} else {
 					
