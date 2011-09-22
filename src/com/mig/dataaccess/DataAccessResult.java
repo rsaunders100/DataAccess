@@ -4,7 +4,7 @@ package com.mig.dataaccess;
 
 /**
  * This is a simple class to store the result of a 
- * http request + parse operation.
+ * http request + parse operation.<p>
  * 
  *   This class is package private, 
  *   is is only used by DataAccess to pass the result of the AsyncTask to the main thread
