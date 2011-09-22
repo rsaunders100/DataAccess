@@ -76,7 +76,7 @@ public class DataAccess<T> {
 	
 	
 	/**
-	 *  Checks to see if there is an existing data access opperation in progress
+	 *  Checks to see if there is an existing data access opperation in progress<p>
 	 *  
 	 *   Use cancel if you need a fresh reuqest, otherwise calls to 
 	 *     startDataAccess will be ignored.
@@ -118,12 +118,12 @@ public class DataAccess<T> {
 	
 
 	/**
-	 * Set up the cache for the request
+	 * Set up the cache for the request<p>
 	 * 
 	 *   If a reuqest is made with the cache length of the previous request,
-	 *      then the previuous result will be used.
+	 *      then the previuous result will be used.<p>
 	 *   
-	 *   Will also save the results presistantly to the device
+	 *   Will also save the results presistantly to the device.
 	 *       
 	 */
 	public void setCacheLength(Context context, int cacheLengthMins) 
@@ -170,25 +170,25 @@ public class DataAccess<T> {
 	
 
 	/**
-	 * Starts a request using the given URL.
+	 * Starts a request using the given URL.<p>
 	 * 
-	 * You must first set an object parser and a delegate
+	 * You must first set an object parser and a delegate.<p>
 	 * 
 	 * The object parser takes response of the http request and parses it into a
-	 * typed data object.
+	 * typed data object.<p>
 	 * 
-	 * The delegate takes a response object and deals with it.
+	 * The delegate takes a response object and deals with it.<p>
 	 * 
 	 * This method does not use any cached data and will perform a fresh request each time. 
-	 * to use the cache use
-	 * 		startDataAccess(String url, boolean usesCache)
+	 * to use the cache use: startDataAccess(String url, boolean usesCache)<p>
 	 * 
 	 * This will log the request url, the request response, and the parsed
 	 * object using log.d This will log any errors in log.e the errors are then
-	 * packed up in the response object and parsed to the delegate
+	 * packed up in the response object and parsed to the delegate.<p>
 	 * 
-	 * NEEDS PERMISSIONS : android.permission.ACCESS_NETWORK_STATE
-	 * android.permission.INTERNET
+	 * NEEDS PERMISSIONS :<br> 
+	 * android.permission.ACCESS_NETWORK_STATE<br>
+	 * android.permission.INTERNET<p>
 	 * 
 	 * @param context
 	 *            Any context
@@ -380,8 +380,10 @@ public class DataAccess<T> {
 			_isInProgress = false;
 
 			// No Internet so package up the error and give it to the delegate
-			if (_failDelegate != null) {
-				_failDelegate.onDataAccessFailed(DataAccessErrorType.NO_CONNECTION, null);
+			if (_failDelegate != null) 
+			{
+				Exception exception = new ConnectException("No internet connection decteded");
+				_failDelegate.onDataAccessFailed(DataAccessErrorType.NO_CONNECTION, exception);
 			}
 		}
 	}
