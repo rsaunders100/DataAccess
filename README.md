@@ -67,6 +67,7 @@ Permission used
 ---------------
 
 `android.permission.ACCESS_NETWORK_STATE`
+
 `android.permission.INTERNET`
 
 
