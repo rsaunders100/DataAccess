@@ -61,3 +61,18 @@ The follwiong errors can be returned to the `onDataAccessFailed` method:
  * `PARSER_FAILED`     The parser threw an error or returned a null object.
  * `UNKNOWN_HOST`      The given URL could not be resolved.
  * `UNKNOWN_ERROR`     Catch all error.
+
+
+Permission used
+---------------
+
+    android.permission.ACCESS_NETWORK_STATE
+    android.permission.INTERNET
+
+
+
+Libraries used
+--------------
+
+This uses
+
