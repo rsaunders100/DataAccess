@@ -10,17 +10,45 @@ Usage
 
  1. Create a data parser
 
-A data parser simply takes an input stream and converts it to a data object of your choice.  Just implement `IDataAccessObjectParser<T>` Where `T` is your output data object type.
+When you fet the data over HTTP you get back a inputstream containing the HTTP response.  A data parser simply takes that input stream and converts it to a data object of your choice.  Just implement `IDataAccessObjectParser<T>` Where `T` is your output data object type.
 
 E.g.
 
-
+     		public class MyParser implements IDataAccessObjectParser<MyDataObject> 
+			{
+				@Override
+				public MyDataObject getDataObject(InputStream inputStream) throws Exception 
+				{
+					// Convert to string
+					String responseString = IOUtils.toString(inputStream, "UTF-8");
+					
+					MyDataObject dataObject = new MyDataObject();
+					
+					// .. Parser the data ....
+					
+					// Return parsed data object
+					return dataObject;
+				}
+			}
 
 
 
  2. Instantiate DataAccess with the Parser
 
-....
+    DataAccess<MyDataObject> dataAccess = new DataAccess<MyDataObject>( new MyParser() );
+    
+ 3. Define what to do when we are sucessfull and when we fail
+
+
+ 4. (Optional) Set some paramters.
+
+
+ 5. Start the request with a URL OR a URL and some data to post.
+
+
+
+
+
 
 
 Errors
