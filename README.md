@@ -1,14 +1,24 @@
 DataAccess - Yet anouther HTTP wrapper
 =========================
 
-A simple framework to help request and parse data from a HTTP request.  Like all of these things its intention is too doing things properly and reduce boilerplate.
+A simple framework to help request and parse data from a HTTP request.  Like all of these things the intention is to reduce boilerplate and to do things properly.
 
 
 
 Usage
 -----
 
- 1. Instantiate DataAccess
+ 1. Create a data parser
+
+A data parser simply takes an input stream and converts it to a data object of your choice.  Just implement `IDataAccessObjectParser<T>` Where `T` is your output data object type.
+
+E.g.
+
+
+
+
+
+ 2. Instantiate DataAccess with the Parser
 
 ....
 
