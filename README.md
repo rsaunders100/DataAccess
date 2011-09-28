@@ -66,8 +66,8 @@ The follwiong errors can be returned to the `onDataAccessFailed` method:
 Permission used
 ---------------
 
-    android.permission.ACCESS_NETWORK_STATE
-    android.permission.INTERNET
+`android.permission.ACCESS_NETWORK_STATE`
+`android.permission.INTERNET`
 
 
 
