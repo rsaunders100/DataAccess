@@ -8,11 +8,9 @@ A simple framework to help request and parse data from a HTTP request.  Like all
 Usage
 -----
 
-1. **Create a data parser**
+ 1. **Create a data parser**
 
- When you fet the data over HTTP you get back a inputstream containing the HTTP response.  A data parser simply takes that input stream and converts it to a data object of your choice.  Just implement `IDataAccessObjectParser<T>` Where `T` is your output data object type.
-
- E.g.
+   When you fet the data over HTTP you get back a inputstream containing the HTTP response.  A data parser simply takes that input stream and converts it to a data object of your choice.  Just implement `IDataAccessObjectParser<T>` Where `T` is your output data object type.
 
      		public class MyParser implements IDataAccessObjectParser<MyDataObject> 
 			{
@@ -33,11 +31,11 @@ Usage
 
 
 
-2. **Instantiate DataAccess with the Parser**
+ 2. **Instantiate DataAccess with the Parser**
 
          DataAccess<MyDataObject> dataAccess = new DataAccess<MyDataObject>( new MyParser() );
     
-3. **Define what to do when we are sucessfull and when we fail**
+ 3. **Define what to do when we are sucessfull and when we fail**
 
               dataAccess.setSucessDelegate(new IDataAccessSucessDelegate<GeoLocationResult>() {
 
@@ -61,12 +59,12 @@ Usage
      			}
      		});
 
-4. **(Optional) Set some paramters.**
+ 4. **(Optional) Set some paramters.**
 
          dataAccess.setCacheLength(this, 10);
          dataAccess.setConnectionTimeOut(20);
 
-5. **Start the request with a URL OR a URL and some data to post.**
+ 5. **Start the request with a URL OR a URL and some data to post.**
 
          dataAccess.startDataAccess(MainActivity.this,
                "http://maps.googleapis.com/maps/api/geocode/json?address=11yorkRoad,Waterloo,London&sensor=false",true);
