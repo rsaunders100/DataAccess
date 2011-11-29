@@ -39,13 +39,37 @@ E.g.
     
  3. **Define what to do when we are sucessfull and when we fail**
 
+              dataAccess.setSucessDelegate(new IDataAccessSucessDelegate<GeoLocationResult>() {
+
+     			@Override
+     			public void onDataAccessSucess(GeoLocationResult result) 
+     			{
+     	   		     double lat = result.getResults().get(0).getGeometry().getLocation().getLat();
+
+    			     Log.i(TAG, "Sucess, Latitude: " + lat);
+    			     Toast toast = Toast.makeText(MainActivity.this, "Lat:" + lat, 1000);
+     			     toast.show();
+     			}
+     		});
+		
+                dataAccess.setFailureDelegate(new IDataAccessFailureDelegate() {
+
+        	        @Override
+     			public void onDataAccessFailed(DataAccessErrorType failReason, Exception exception) 
+        	        {
+     				Log.i(TAG, "Failed, reason: " + failReason.toString());
+     			}
+     		});
 
  4. **(Optional) Set some paramters.**
 
+     dataAccess.setCacheLength(this, 10);
+     dataAccess.setConnectionTimeOut(20);
 
  5. **Start the request with a URL OR a URL and some data to post.**
 
-
+     dataAccess.startDataAccess(MainActivity.this,
+           "http://maps.googleapis.com/maps/api/geocode/json?address=11yorkRoad,Waterloo,London&sensor=false",true);
 
 
 
@@ -75,5 +99,8 @@ Permission used
 Libraries used
 --------------
 
-This uses
+This is essecienially a thin wrapper around ignitionHTTP  (formally [droudFu](https://github.com/kaeppler/droid-fu)).  
+IgnitionHTTP deals with some connection retry logic and also handles the situation where Wi-Fi goes to 3G or vice versa.
+
+This also uses the execelent [GSON](http://code.google.com/p/google-gson/) for the example parser.
 
