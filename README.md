@@ -63,13 +63,13 @@ E.g.
 
  4. **(Optional) Set some paramters.**
 
-     dataAccess.setCacheLength(this, 10);
-     dataAccess.setConnectionTimeOut(20);
+         dataAccess.setCacheLength(this, 10);
+         dataAccess.setConnectionTimeOut(20);
 
  5. **Start the request with a URL OR a URL and some data to post.**
 
-     dataAccess.startDataAccess(MainActivity.this,
-           "http://maps.googleapis.com/maps/api/geocode/json?address=11yorkRoad,Waterloo,London&sensor=false",true);
+         dataAccess.startDataAccess(MainActivity.this,
+               "http://maps.googleapis.com/maps/api/geocode/json?address=11yorkRoad,Waterloo,London&sensor=false",true);
 
 
 
