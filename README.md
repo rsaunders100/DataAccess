@@ -10,35 +10,35 @@ Usage
 
  1. **Create a data parser**
 
-   When you fet the data over HTTP you get back a inputstream containing the HTTP response.  A data parser simply takes that input stream and converts it to a data object of your choice.  Just implement `IDataAccessObjectParser<T>` Where `T` is your output data object type.
+    When you fetch the data over HTTP you get back a inputstream containing the HTTP response.  A data parser simply takes that input stream and converts it to a data object of your choice.  Just implement `IDataAccessObjectParser<T>` Where `T` is your output data object type.
 
-     		public class MyParser implements IDataAccessObjectParser<MyDataObject> 
-			{
-				@Override
-				public MyDataObject getDataObject(InputStream inputStream) throws Exception 
-				{
-					// Convert to string
-					String responseString = IOUtils.toString(inputStream, "UTF-8");
+     	public class MyParser implements IDataAccessObjectParser<MyDataObject> 
+     	{
+                @Override
+                public MyDataObject getDataObject(InputStream inputStream) throws Exception 
+                {
+                        // Convert to string
+                        String responseString = IOUtils.toString(inputStream, "UTF-8");
 					
-					MyDataObject dataObject = new MyDataObject();
+                        MyDataObject dataObject = new MyDataObject();
 					
-					// .. Parser the data ....
+                        // .. Parser the data ....
 					
-					// Return parsed data object
-					return dataObject;
-				}
-			}
+                        // Return parsed data object
+                        return dataObject;
+                }
+        }
 
 
 
  2. **Instantiate DataAccess with the Parser**
 
-         DataAccess<MyDataObject> dataAccess = new DataAccess<MyDataObject>( new MyParser() );
+       DataAccess<MyDataObject> dataAccess = new DataAccess<MyDataObject>( new MyParser() );
     
  3. **Define what to do when we are sucessfull and when we fail**
 
-              dataAccess.setSucessDelegate(new IDataAccessSucessDelegate<GeoLocationResult>() {
-
+       dataAccess.setSucessDelegate(new IDataAccessSucessDelegate<GeoLocationResult>() 
+       {
      			@Override
      			public void onDataAccessSucess(GeoLocationResult result) 
      			{
@@ -48,28 +48,26 @@ Usage
     			     Toast toast = Toast.makeText(MainActivity.this, "Lat:" + lat, 1000);
      			     toast.show();
      			}
-     		});
+     	});
 		
-                dataAccess.setFailureDelegate(new IDataAccessFailureDelegate() {
-
+        dataAccess.setFailureDelegate(new IDataAccessFailureDelegate() 
+        {
         	        @Override
      			public void onDataAccessFailed(DataAccessErrorType failReason, Exception exception) 
         	        {
      				Log.i(TAG, "Failed, reason: " + failReason.toString());
      			}
-     		});
+     	});
 
  4. **(Optional) Set some paramters.**
 
-         dataAccess.setCacheLength(this, 10);
-         dataAccess.setConnectionTimeOut(20);
+        dataAccess.setCacheLength(this, 10);
+        dataAccess.setConnectionTimeOut(20);
 
  5. **Start the request with a URL OR a URL and some data to post.**
 
-         dataAccess.startDataAccess(MainActivity.this,
+        dataAccess.startDataAccess(MainActivity.this,
                "http://maps.googleapis.com/maps/api/geocode/json?address=11yorkRoad,Waterloo,London&sensor=false",true);
-
-
 
 
 Errors
