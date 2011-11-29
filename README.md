@@ -33,12 +33,12 @@ Usage
 
  2. **Instantiate DataAccess with the Parser**
 
-       DataAccess<MyDataObject> dataAccess = new DataAccess<MyDataObject>( new MyParser() );
+        DataAccess<MyDataObject> dataAccess = new DataAccess<MyDataObject>( new MyParser() );
     
  3. **Define what to do when we are sucessfull and when we fail**
 
-       dataAccess.setSucessDelegate(new IDataAccessSucessDelegate<GeoLocationResult>() 
-       {
+        dataAccess.setSucessDelegate(new IDataAccessSucessDelegate<GeoLocationResult>() 
+        {
      			@Override
      			public void onDataAccessSucess(GeoLocationResult result) 
      			{
